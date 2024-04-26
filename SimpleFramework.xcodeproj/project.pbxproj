@@ -11,7 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 8E5AA1922BDB9ECE00F7849F /* Build configuration list for PBXAggregateTarget "Universal-Framework" */;
 			buildPhases = (
-				8E5AA1952BDB9EDA00F7849F /* ShellScript */,
+				8E5AA1952BDB9EDA00F7849F /* Run Script */,
 			);
 			dependencies = (
 			);
@@ -211,7 +211,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8E5AA1952BDB9EDA00F7849F /* ShellScript */ = {
+		8E5AA1952BDB9EDA00F7849F /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -220,13 +220,14 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "rm -fr ./SimpleFramework.xcframework\n\necho \"Building for iOS...\"\nxcodebuild archive \\\n    -sdk iphoneos IPHONEOS_DEPLOYMENT_TARGET=9.0 \\\n    -arch arm64 \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    -scheme \"SimpleFramework\" \\\n    -archivePath \"./build/iphoneos/SimpleFramework.xcarchive\" SKIP_INSTALL=NO\n\necho \"Building for iOS Simulator...\"\nxcodebuild archive \\\n    -sdk iphonesimulator IPHONEOS_DEPLOYMENT_TARGET=9.0 \\\n    -arch x86_64 -arch arm64\\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    -scheme \"SimpleFramework\" \\\n    -archivePath \"./build/iphonesimulator/SimpleFramework.xcarchive\" SKIP_INSTALL=NO\n\n\necho \"Building XCFramework...\"\nxcodebuild -create-xcframework -output ./SimpleFramework.xcframework \\\n    -framework \"./build/iphoneos/SimpleFramework.xcarchive/Products/Library/Frameworks/SimpleFramework.framework\" \\\n    -framework \"./build/iphonesimulator/SimpleFramework.xcarchive/Products/Library/Frameworks/SimpleFramework.framework\"\n";
+			shellScript = "rm -fr ./SimpleFramework.xcframework\n\necho \"Building for iOS...\"\nxcodebuild archive \\\n    -sdk iphoneos IPHONEOS_DEPLOYMENT_TARGET=9.0 \\\n    -arch arm64 \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    -scheme \"SimpleFramework\" \\\n    -archivePath \"./build/iphoneos/SimpleFramework.xcarchive\" SKIP_INSTALL=NO CODE_SIGNING_ALLOWED=NO\n\necho \"Building for iOS Simulator...\"\nxcodebuild archive \\\n    -sdk iphonesimulator IPHONEOS_DEPLOYMENT_TARGET=9.0 \\\n    -arch x86_64 -arch arm64\\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    -scheme \"SimpleFramework\" \\\n    -archivePath \"./build/iphonesimulator/SimpleFramework.xcarchive\" SKIP_INSTALL=NO CODE_SIGNING_ALLOWED=NO\n\n\necho \"Building XCFramework...\"\nxcodebuild -create-xcframework -output ./SimpleFramework.xcframework \\\n    -framework \"./build/iphoneos/SimpleFramework.xcarchive/Products/Library/Frameworks/SimpleFramework.framework\" \\\n    -framework \"./build/iphonesimulator/SimpleFramework.xcarchive/Products/Library/Frameworks/SimpleFramework.framework\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
