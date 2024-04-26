@@ -25,9 +25,15 @@ jobs:
         env:
           scheme: ${{ 'default' }}
         run: |
+          echo "run 1"
           if [ $scheme = default ]; then scheme=$(cat default); fi
+          echo "run 2"
+          pwd
+          echo "run 3"
+          ls -A
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
           echo file_to_build: $file_to_build
           pwd
+          ls -A
           xcodebuild clean build analyze -scheme "$scheme" -"$filetype_parameter" "$file_to_build" | xcpretty && exit ${PIPESTATUS[0]}
