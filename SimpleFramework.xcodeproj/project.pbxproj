@@ -45,6 +45,7 @@
 		8E5AA17B2BDB9D8800F7849F /* SimpleFramework.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = SimpleFramework.docc; sourceTree = "<group>"; };
 		8E5AA1812BDB9D8800F7849F /* SimpleFrameworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleFrameworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E5AA1862BDB9D8800F7849F /* SimpleFrameworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleFrameworkTests.swift; sourceTree = "<group>"; };
+		8E8B12672BEC6FEF00F469D2 /* SimpleFramework.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SimpleFramework.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +70,7 @@
 		8E5AA16D2BDB9D8800F7849F = {
 			isa = PBXGroup;
 			children = (
+				8E8B12672BEC6FEF00F469D2 /* SimpleFramework.xctestplan */,
 				8E5AA1792BDB9D8800F7849F /* SimpleFramework */,
 				8E5AA1852BDB9D8800F7849F /* SimpleFrameworkTests */,
 				8E5AA1782BDB9D8800F7849F /* Products */,
