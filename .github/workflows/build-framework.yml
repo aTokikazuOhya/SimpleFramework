@@ -67,7 +67,7 @@ jobs:
           DIR_NAME="${PRODUCT_NAME}-${{ github.sha }}"
           echo "DIR_NAME=$DIR_NAME" >> "$GITHUB_ENV"
           mkdir $DIR_NAME
-          mv "*.xcframework" $DIR_NAME
+          mv *.xcframework $DIR_NAME
           {
             echo "Repository: ${{ github.repositoryUrl }}"
             echo "Ref: ${{ github.ref }}"
