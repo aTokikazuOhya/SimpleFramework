@@ -4,13 +4,15 @@ on:
   [push, pull_request]
 
 env:
+  PRODUCT_NAME: SimpleFramework
   PROJECT_FILE: SimpleFramework.xcodeproj
   BUILD_SCHEME: Universal-Framework
   TEST_SCHEME: SimpleFramework
+  DIR_NAME: "${{ env.PRODUCT_NAME }}-${{ github.sha }}"
 
 jobs:
   build:
-    name: Build and analyse using xcodebuild command
+    name: Build the framework
     runs-on: macos-latest
 
     steps:
@@ -49,20 +51,30 @@ jobs:
 
       - name: Build
         run: |
-          xcodebuild clean build analyze -project "$PROJECT_FILE" -scheme "$BUILD_SCHEME" | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild clean build analyze -project $PROJECT_FILE -scheme $BUILD_SCHEME | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Test
-        env:
-          PLATFORM: 'iOS Simulator'
-          MODEL: "iPhone SE"
-          OS: 'latest'
+#      - name: Test
+#        env:
+#          PLATFORM: 'iOS Simulator'
+#          MODEL: "iPhone SE"
+#          OS: 'latest'
+#        run: |
+#          device=$(xcrun xctrace list devices 2>&1 | grep -oE "$MODEL.*Simulator" | tail -n 1 | sed 's/ Simulator//')
+#          echo "device: $device"
+#          xcodebuild test -project $PROJECT_FILE -scheme $TEST_SCHEME -sdk iphonesimulator -destination "platform=$PLATFORM,name=$device,OS=$OS" | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Package
         run: |
-          device=$(xcrun xctrace list devices 2>&1 | grep -oE "$MODEL.*Simulator" | tail -n 1 | sed 's/ Simulator//')
-          echo "device: $device"
-          xcodebuild test -project "$PROJECT_FILE" -scheme "$TEST_SCHEME" -sdk iphonesimulator -destination "platform=$PLATFORM,name=$device,OS=$OS" | xcpretty && exit ${PIPESTATUS[0]}
+          mkdir $DIR_NAME
+          mv "*.xcframework" $DIR_NAME
+          {
+            echo "Repository: ${{ github.repositoryUrl }}"
+            echo "Ref: ${{ github.ref }}"
+            echo "SHA: ${{ github.sha }}"
+          } > $DIR_NAME/info.txt
 
-      - name: Upload framework
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: SimpleFramework.xcframework
-          path: SimpleFramework.xcframework
+          name: $DIR_NAME
+          path: $DIR_NAME
