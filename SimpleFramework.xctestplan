@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "591586E5-A7F4-417C-B7B4-75C2D79D566A",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:SimpleFramework.xcodeproj",
+        "identifier" : "8E5AA1802BDB9D8800F7849F",
+        "name" : "SimpleFrameworkTests"
+      }
+    }
+  ],
+  "version" : 1
+}

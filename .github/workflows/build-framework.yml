@@ -3,9 +3,15 @@ name: Xcode - Build and Upload
 on:
   [push, pull_request]
 
+env:
+  PRODUCT_NAME: SimpleFramework
+  PROJECT_FILE: SimpleFramework.xcodeproj
+  BUILD_SCHEME: Universal-Framework
+  TEST_SCHEME: SimpleFramework
+
 jobs:
   build:
-    name: Build and analyse default scheme using xcodebuild command
+    name: Build the framework
     runs-on: macos-latest
 
     steps:
@@ -42,26 +48,34 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-      - name: Set Default Scheme
-        run: |
-          scheme_list=$(xcodebuild -list -json | tr -d "\n")
-          #default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
-          default='Universal-Framework'
-          echo $default | cat >default
-          echo Using default scheme: $default
-
       - name: Build
-        env:
-          scheme: ${{ 'default' }}
         run: |
-          if [ $scheme = default ]; then scheme=$(cat default); fi
-          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
-          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
-          echo file_to_build: $file_to_build
-          xcodebuild clean build analyze -scheme "$scheme" -"$filetype_parameter" "$file_to_build" | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild clean build analyze -project $PROJECT_FILE -scheme $BUILD_SCHEME | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Upload framework
+      - name: Test
+        env:
+          PLATFORM: 'iOS Simulator'
+          MODEL: "iPhone SE"
+          OS: 'latest'
+        run: |
+          device=$(xcrun xctrace list devices 2>&1 | grep -oE "$MODEL.*Simulator" | tail -n 1 | sed 's/ Simulator//')
+          echo "device: $device"
+          xcodebuild test -project $PROJECT_FILE -scheme $TEST_SCHEME -sdk iphonesimulator -destination "platform=$PLATFORM,name=$device,OS=$OS" | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Package
+        run: |
+          DIR_NAME="${PRODUCT_NAME}@${{ github.sha }}"
+          echo "DIR_NAME=$DIR_NAME" >> "$GITHUB_ENV"
+          mkdir $DIR_NAME
+          mv *.xcframework $DIR_NAME
+          {
+            echo "Repository: ${{ github.repositoryUrl }}"
+            echo "Ref: ${{ github.ref }}"
+            echo "SHA: ${{ github.sha }}"
+          } > $DIR_NAME/info.txt
+
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: SimpleFramework.xcframework
-          path: SimpleFramework.xcframework
+          name: ${{ env.DIR_NAME }}
+          path: ${{ env.DIR_NAME }}
