@@ -59,7 +59,7 @@ jobs:
         run: |
           device=$(xcrun xctrace list devices 2>&1 | grep -oE "$MODEL.*Simulator" | tail -n 1 | sed 's/ Simulator//')
           echo "device: $device"
-          xcodebuild test-without-building -project "$PROJECT_FILE" -scheme "$TEST_SCHEME" -sdk iphonesimulator -destination "platform=$PLATFORM,name=$device,OS=$OS"
+          xcodebuild test -project "$PROJECT_FILE" -scheme "$TEST_SCHEME" -sdk iphonesimulator -destination "platform=$PLATFORM,name=$device,OS=$OS" | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Upload framework
         uses: actions/upload-artifact@v4
