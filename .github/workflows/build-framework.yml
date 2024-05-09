@@ -73,10 +73,13 @@ jobs:
             echo "Ref: ${{ github.ref }}"
             echo "SHA: ${{ github.sha }}"
           } > $DIR_NAME/info.txt
+          echo "ls -a"
           ls -a
+          echo "ls -a $DIR_NAME"
+          ls -a $DIR_NAME
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: $DIR_NAME
-          path: $DIR_NAME
+          name: ${{ env.DIR_NAME }}
+          path: ${{ env.DIR_NAME }}
