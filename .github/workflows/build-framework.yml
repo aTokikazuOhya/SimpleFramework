@@ -50,6 +50,16 @@ jobs:
         run: |
           xcodebuild clean build analyze -scheme "$SCHEME" -project "$PROJECT_FILE" | xcpretty && exit ${PIPESTATUS[0]}
 
+      - name: Test
+        env:
+          PLATFORM: 'iOS Simulator'
+          MODEL: "iPhone SE"
+          OS: 'latest'
+        run: |
+          device=$(xcrun xctrace list devices 2>&1 | grep -oE "$MODEL.*Simulator" | tail -n 1 | sed 's/ Simulator//')
+          echo "device: $device"
+          xcodebuild test-without-building -scheme "$SCHEME" -project "$PROJECT_FILE" -destination "platform=$PLATFORM,name=$device,OS=$OS"
+
       - name: Upload framework
         uses: actions/upload-artifact@v4
         with:
