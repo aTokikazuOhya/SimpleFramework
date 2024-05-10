@@ -84,7 +84,6 @@ jobs:
 
       - name: Build [staging]
         run: |
-          ./switch-staging.sh
           xcodebuild clean build analyze -project $PROJECT_FILE -scheme $BUILD_SCHEME | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Package [staging]
