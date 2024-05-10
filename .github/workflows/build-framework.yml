@@ -19,7 +19,8 @@ jobs:
     steps:
       - name: Prepare
         run: |
-          DIR_NAME="${PRODUCT_NAME}@${{ github.sha }}"
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c 1-8)
+          DIR_NAME="${PRODUCT_NAME}@$SHORT_SHA"
           echo "DIR_NAME=$DIR_NAME" >> "$GITHUB_ENV"
           mkdir -p $DIR_NAME
 
@@ -80,11 +81,7 @@ jobs:
 
       - name: Edit for staging
         run: |
-          pwd
-          ls -l $SERVER_SETTING_FILE
-          echo sed -i.bak -E "/^let +SERVER_BASE_URL/s#\".*\"#\"$STAGING_SERVER_URL\"#" $SERVER_SETTING_FILE
           sed -i.bak -E "/^let +SERVER_BASE_URL/s#\".*\"#\"$STAGING_SERVER_URL\"#" $SERVER_SETTING_FILE
-          echo $?
 
       - name: Build [staging]
         run: |
