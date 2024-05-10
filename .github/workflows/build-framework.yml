@@ -82,8 +82,8 @@ jobs:
         run: |
           pwd
           ls -l $SERVER_SETTING_FILE
-          echo sed -i -E "/^let +SERVER_BASE_URL/s#\".*\"#\"$STAGING_SERVER_URL\"#" $SERVER_SETTING_FILE
-          sed -i -E "/^let +SERVER_BASE_URL/s#\".*\"#\"$STAGING_SERVER_URL\"#" $SERVER_SETTING_FILE
+          echo sed -i.bak -E "/^let +SERVER_BASE_URL/s#\".*\"#\"$STAGING_SERVER_URL\"#" $SERVER_SETTING_FILE
+          sed -i.bak -E "/^let +SERVER_BASE_URL/s#\".*\"#\"$STAGING_SERVER_URL\"#" $SERVER_SETTING_FILE
           echo $?
 
       - name: Build [staging]
