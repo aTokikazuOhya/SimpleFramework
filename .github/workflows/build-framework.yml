@@ -8,6 +8,8 @@ env:
   PROJECT_FILE: SimpleFramework.xcodeproj
   BUILD_SCHEME: Universal-Framework
   TEST_SCHEME: SimpleFramework
+  SERVER_SETTING_FILE: SimpleFramework/Simple.swift
+  STAGING_SERVER_URL: https://api.tangerine.io:8443/TangerineCloudV2
 
 jobs:
   build:
@@ -15,6 +17,12 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      - name: Prepare
+        run: |
+          DIR_NAME="${PRODUCT_NAME}@${{ github.sha }}"
+          echo "DIR_NAME=$DIR_NAME" >> "$GITHUB_ENV"
+          mkdir -p $DIR_NAME
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -48,11 +56,11 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-      - name: Build
+      - name: Build [production] (AS-IS)
         run: |
           xcodebuild clean build analyze -project $PROJECT_FILE -scheme $BUILD_SCHEME | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Test
+      - name: Test [production]
         env:
           PLATFORM: 'iOS Simulator'
           MODEL: "iPhone SE"
@@ -62,13 +70,35 @@ jobs:
           echo "device: $device"
           xcodebuild test -project $PROJECT_FILE -scheme $TEST_SCHEME -sdk iphonesimulator -destination "platform=$PLATFORM,name=$device,OS=$OS" | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Package
+      - name: Package [production]
+        env:
+          ENV_NAME: production
         run: |
-          DIR_NAME="${PRODUCT_NAME}@${{ github.sha }}"
-          echo "DIR_NAME=$DIR_NAME" >> "$GITHUB_ENV"
-          mkdir $DIR_NAME
-          mv *.xcframework $DIR_NAME
+          mkdir -p $DIR_NAME/$ENV_NAME
+          mv *.xcframework $DIR_NAME/$ENV_NAME
+          grep SERVER_BASE_URL $SERVER_SETTING_FILE > $DIR_NAME/$ENV_NAME/info_$ENV_NAME.txt
+
+      - name: Edit for staging
+        run: |
+          sed -i -E "/^let +SERVER_BASE_URL/s#\".*\"#\"$STAGING_SERVER_URL\"#" $SERVER_SETTING_FILE
+
+      - name: Build [staging]
+        run: |
+          ./switch-staging.sh
+          xcodebuild clean build analyze -project $PROJECT_FILE -scheme $BUILD_SCHEME | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Package [staging]
+        env:
+          ENV_NAME: staging
+        run: |
+          mkdir -p $DIR_NAME/$ENV_NAME
+          mv *.xcframework $DIR_NAME/$ENV_NAME
+          grep SERVER_BASE_URL $SERVER_SETTING_FILE > $DIR_NAME/$ENV_NAME/info_$ENV_NAME.txt
+
+      - name: Create info file
+        run: |
           {
+            date
             echo "Repository: ${{ github.repositoryUrl }}"
             echo "Ref: ${{ github.ref }}"
             echo "SHA: ${{ github.sha }}"
