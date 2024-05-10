@@ -76,11 +76,15 @@ jobs:
         run: |
           mkdir -p $DIR_NAME/$ENV_NAME
           mv *.xcframework $DIR_NAME/$ENV_NAME
-          grep SERVER_BASE_URL $SERVER_SETTING_FILE > $DIR_NAME/$ENV_NAME/info_$ENV_NAME.txt
+          grep -E "^let +SERVER_BASE_URL" $SERVER_SETTING_FILE > $DIR_NAME/$ENV_NAME/info_$ENV_NAME.txt
 
       - name: Edit for staging
         run: |
+          pwd
+          ls -l $SERVER_SETTING_FILE
+          echo sed -i -E "/^let +SERVER_BASE_URL/s#\".*\"#\"$STAGING_SERVER_URL\"#" $SERVER_SETTING_FILE
           sed -i -E "/^let +SERVER_BASE_URL/s#\".*\"#\"$STAGING_SERVER_URL\"#" $SERVER_SETTING_FILE
+          echo $?
 
       - name: Build [staging]
         run: |
@@ -92,7 +96,7 @@ jobs:
         run: |
           mkdir -p $DIR_NAME/$ENV_NAME
           mv *.xcframework $DIR_NAME/$ENV_NAME
-          grep SERVER_BASE_URL $SERVER_SETTING_FILE > $DIR_NAME/$ENV_NAME/info_$ENV_NAME.txt
+          grep -E "^let +SERVER_BASE_URL" $SERVER_SETTING_FILE > $DIR_NAME/$ENV_NAME/info_$ENV_NAME.txt
 
       - name: Create info file
         run: |
