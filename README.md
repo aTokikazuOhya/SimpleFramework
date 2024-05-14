@@ -1,4 +1,8 @@
 # SimpleFramework
 GitHub Actions sample
 
-![SimpleFramework](https://github.com/aTokikazuOhya/SimpleFramework/actions/workflows/build-framework.yml/badge.svg?branch=main)
+main  
+[![Build and Upload](https://github.com/aTokikazuOhya/SimpleFramework/actions/workflows/build-framework.yml/badge.svg?branch=main)](https://github.com/aTokikazuOhya/SimpleFramework/actions/workflows/build-framework.yml)
+
+develop  
+[![Build and Upload](https://github.com/aTokikazuOhya/SimpleFramework/actions/workflows/build-framework.yml/badge.svg?branch=develop)](https://github.com/aTokikazuOhya/SimpleFramework/actions/workflows/build-framework.yml)
