@@ -1,6 +1,6 @@
-name: Xcode - Build and Upload
+name: Build and Upload
 
-#on: push
+on: push
 #on: workflow_dispatch #  [push, pull_request]
 
 env:
