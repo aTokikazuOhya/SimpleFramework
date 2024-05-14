@@ -1,7 +1,6 @@
 name: Xcode - Build and Upload
 
-on:
-  [push, pull_request]
+on: workflow_dispatch #  [push, pull_request]
 
 env:
   PRODUCT_NAME: SimpleFramework
